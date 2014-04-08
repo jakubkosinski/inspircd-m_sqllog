@@ -106,13 +106,6 @@ CREATE INDEX index_on_events_nick ON events USING btree (nick);
 
 
 --
--- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace:
---
-
-CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
-
-
---
 -- PostgreSQL database dump complete
 --
 
