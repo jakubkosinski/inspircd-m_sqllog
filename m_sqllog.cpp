@@ -6,7 +6,7 @@
  * See: http://wiki.inspircd.org/Credits
  *
  * This program is free but copyrighted software; see
- *	    the file COPYING for details.
+ *      the file COPYING for details.
  *
  * Author: Jakub Kosiński <jakub@kosinski.info>
  *
@@ -21,29 +21,29 @@
 class MessageLogQuery : public SQLQuery
 {
  public:
-	MessageLogQuery(Module* me)
-		: SQLQuery(me)
-	{
-	}
+  MessageLogQuery(Module* me)
+    : SQLQuery(me)
+  {
+  }
 
-	void OnResult(SQLResult& res)
-	{
-	}
+  void OnResult(SQLResult& res)
+  {
+  }
 
-	void OnError(SQLerror& error)
-	{
-		ServerInstance->Logs->Log("m_sqllog", DEFAULT, "SQLLOG: query failed (%s)", error.Str());
-	}
+  void OnError(SQLerror& error)
+  {
+    ServerInstance->Logs->Log("m_sqllog", DEFAULT, "SQLLOG: query failed (%s)", error.Str());
+  }
 };
 
 class ModuleSQLLog : public Module
 {
   LocalIntExt pendingExt;
-	dynamic_reference<SQLProvider> SQL;
+  dynamic_reference<SQLProvider> SQL;
   std::string query;
 
 public:
-	ModuleSQLLog() : pendingExt("sqlauth-wait", this), SQL(this, "SQL")
+  ModuleSQLLog() : pendingExt("sqlauth-wait", this), SQL(this, "SQL")
   {
   }
 
@@ -69,10 +69,10 @@ public:
   void LogMessage(User* user, Channel* channel, const std::string &text, const std::string &event)
   {
       if (!SQL)
-  		{
-    			ServerInstance->Logs->Log("m_sqllog", DEFAULT, "SQLLOG: SQL database not present");
-  		}
-      else if (query == NULL)
+      {
+          ServerInstance->Logs->Log("m_sqllog", DEFAULT, "SQLLOG: SQL database not present");
+      }
+      else if (query.empty())
       {
           ServerInstance->Logs->Log("m_sqllog", DEFAULT, "SQLLOG: SQL query is not provided");
       }
@@ -91,7 +91,7 @@ public:
 
   ModResult OnPreTopicChange(User* user, Channel* channel, const std::string &text)
   {
-      LogMessage(user, channel, text, "topic");
+      LogMessage(user, channel, text, std::string("topic"));
       return MOD_RES_PASSTHRU;
   }
 
@@ -99,7 +99,7 @@ public:
   {
       if (target_type == TYPE_CHANNEL) {
           Channel* channel = (Channel*) dest;
-          LogMessage(user, channel, text, "message");
+          LogMessage(user, channel, text, std::string("message"));
       }
       return MOD_RES_PASSTHRU;
   }
@@ -108,25 +108,25 @@ public:
   {
       if (target_type == TYPE_CHANNEL) {
           Channel* channel = (Channel*) dest;
-          LogMessage(user, channel, text, "notice");
+          LogMessage(user, channel, text, std::string("notice"));
       }
       return MOD_RES_PASSTHRU;
   }
 
   void OnUserJoin(Membership* memb, bool sync, bool created, CUList& excepts)
   {
-      LogMessage(memb->user, memb->chan, "", "join");
+      LogMessage(memb->user, memb->chan, std::string(), std::string("join"));
   }
 
   void OnUserPart(Membership* memb, std::string &partmessage, CUList& except_list)
   {
-      LogMessage(memb->user, memb->chan, partmessage, "part");
+      LogMessage(memb->user, memb->chan, partmessage, std::string("part"));
   }
 
-	Version GetVersion()
-	{
-		return Version("Allows storage of channel messages in a SQL table", VF_VENDOR);
-	}
+  Version GetVersion()
+  {
+    return Version("Allows storage of channel messages in a SQL table", VF_VENDOR);
+  }
 
 };
 
