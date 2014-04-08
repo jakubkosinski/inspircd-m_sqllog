@@ -40,6 +40,7 @@ class ModuleSQLLog : public Module
 {
   LocalIntExt pendingExt;
 	dynamic_reference<SQLProvider> SQL;
+  std::string query;
 
 public:
 	ModuleSQLLog() : pendingExt("sqlauth-wait", this), SQL(this, "SQL")
@@ -58,6 +59,7 @@ public:
   {
     ConfigTag* conf = ServerInstance->Config->ConfValue("sqllog");
     std::string dbid = conf->getString("dbid");
+    query = conf->getString("query");
     if (dbid.empty())
       SQL.SetProvider("SQL");
     else
@@ -70,6 +72,10 @@ public:
   		{
     			ServerInstance->Logs->Log("m_sqllog", DEFAULT, "SQLLOG: SQL database not present");
   		}
+      else if (query == NULL)
+      {
+          ServerInstance->Logs->Log("m_sqllog", DEFAULT, "SQLLOG: SQL query is not provided");
+      }
       else
       {
           ParamM queryInfo;
