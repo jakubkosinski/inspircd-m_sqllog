@@ -9,6 +9,8 @@ InspIRCd module that allows storing channel logs in SQL database. You can find d
 * topic change
 * notice sent to channel
 
+Tested with inspIRCd 2.0.5.
+
 Configuration
 -------------
 
